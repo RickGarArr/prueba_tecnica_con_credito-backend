@@ -1,19 +1,18 @@
 import { Request, Response } from 'express';
 import moment from 'moment';
-import { ObjectId } from 'mongoose';
 import { create, getAll, getOne, updateOne } from '../access/prospecto.access';
 import { sendErrors } from '../helpers/sendMesages';
 import { IFile, IProspectoDB } from '../interfaces/prospecto';
 
 export function getProspectos(req: Request, res: Response) {
-    const { page } = req.params;
-    const evaluados = Boolean(req.query.evaluados);
-    getAll(Number(page), evaluados, (err: any, result: { prospectos: Array<IProspectoDB>, count: number} ) => {
+    const { estatus, nombre } = req.query;
+    const page = Number(req.query.page) || 1;
+    getAll(page, { nombre, estatus }, (err: any, {prospectos, number}: {number: Number, prospectos:IProspectoDB[]}) => {
         if (err) return console.log(err);
         res.json({
-            total: result.count,
-            prospectos: result.prospectos
-        })
+            total: number,
+            prospectos
+        });
     });
 }
 
@@ -50,7 +49,7 @@ export function evaluarProspecto(req: Request, res: Response) {
     updateOne(id, {estatus, observaciones}, (err: any, prospecto: IProspectoDB) => {
         if(err) return sendErrors(res, 400, 'error al editar prospecto');
         res.json({
-            prospecto
+            msg: `Prospecto evaluado correctamente`
         });
     });
 }

@@ -19,7 +19,7 @@ router.post('/prospecto', [
 ], postProspectos);
 
 
-router.put('/prospecto/:id', [
+router.put('/prospecto/evaluar/:id', [
     validarMongoID,
     validarObservaciones
 ], evaluarProspecto)
