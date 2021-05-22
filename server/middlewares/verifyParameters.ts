@@ -23,12 +23,11 @@ export function validarMongoID(req: Request, res: Response, next: NextFunction) 
 
 export function validarObservaciones(req: Request, res: Response, next: NextFunction) {
     const { estatus, observaciones } = req.body;
-    const parametrosValidos = { estatus, observaciones };
-    const errors: string[] = [];
-    Object.entries(parametrosValidos).forEach(([key, value]) => {
-        if (!value || value.trim() == '') errors.push(`El parametro ${key} es obligatorio`);
-        if (value?.length > 64) errors.push(`El parametro ${key} es muy largo`);
-    });
-    if (errors.length > 0) return sendErrors(res, 400, ...errors);
+    if (!estatus || estatus.trim() === "") return sendErrors(res, 400, "El parametro estatus es necesario");
+    const estatusValios = ["autorizado", "rechazado", "enviado"];
+    if (!estatusValios.includes(estatus)) return sendErrors(res, 400, "El parametro estatus no es valido", "parametros validos ['aceptado', 'rechazado', 'enviado']");
+    if (estatus.toLowerCase() === "rechazado") {
+        if (!observaciones || observaciones.trim() === "") return sendErrors(res, 400, "Al ser un rechazo son necesarias las observaciones");
+    }
     next();
 }

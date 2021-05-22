@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import moment from 'moment';
 import { create, getAll, getOne, updateOne } from '../access/prospecto.access';
 import { getPathFile } from '../helpers/filesHelper';
@@ -29,7 +29,7 @@ export function postProspectos(req: Request, res: Response) {
     });
     const { nombre, apellido_pat, apellido_mat, calle, numero, colonia, codigo_postal, telefono, rfc } = req.body;
     create({
-        nombre, apellido_mat, apellido_pat, calle, numero, colonia, codigo_postal, telefono, rfc, estatus: "Enviado",
+        nombre, apellido_mat, apellido_pat, calle, numero, colonia, codigo_postal, telefono, rfc, estatus: "enviado",
         created_at: date, files
     }, (err: any, prospectoDB: IProspectoDB) => {
         if (err) return console.log(err);
@@ -53,7 +53,9 @@ export function getProspecto(req: Request, res: Response) {
 export function evaluarProspecto(req: Request, res: Response) {
     const { id } = req.params;
     const { estatus, observaciones } = req.body;
-    updateOne(id, { estatus, observaciones }, (err: any, prospecto: IProspectoDB) => {
+    let update: any = {};
+    if (estatus !== "rechazado") { update.estatus = estatus; } else { update.estatus = estatus; update.observaciones = observaciones; }
+    updateOne(id, update, (err: any, prospecto: IProspectoDB) => {
         if (err) return sendErrors(res, 400, 'error al editar prospecto');
         res.json({
             msg: `Prospecto evaluado correctamente`
