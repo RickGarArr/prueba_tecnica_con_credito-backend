@@ -4,7 +4,7 @@ import _fs from 'fs';
 import _moment from 'moment';
 import moment from "moment";
 import { sendErrors } from "../helpers/sendMesages";
-import { eliminarCarpeta } from "../helpers/deleteFiles";
+import { eliminarCarpeta } from "../helpers/filesHelper";
 
 export function FileHandler(req: Request, res: Response, next: NextFunction) {
     req.body.fecha = moment().format('YYYYMMDDHHmmss');

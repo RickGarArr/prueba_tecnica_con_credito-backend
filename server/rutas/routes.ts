@@ -1,12 +1,16 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { getProspecto, getProspectos, postProspectos, evaluarProspecto} from '../controladores/routes.controller';
+import { getProspecto, getProspectos, postProspectos, evaluarProspecto, sendFile} from '../controladores/routes.controller';
 import { FileHandler } from '../middlewares/filesHandler';
 import { validarMongoID, validarObservaciones, validarParametros } from '../middlewares/verifyParameters';
 const router = Router();
 const upload = multer();
 
 router.get('/prospectos', getProspectos);
+
+router.get('/file/:id/:filename', [
+    validarMongoID
+], sendFile);
 
 router.get('/prospecto/:id', [
     validarMongoID

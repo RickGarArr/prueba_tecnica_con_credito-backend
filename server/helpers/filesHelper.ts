@@ -1,4 +1,5 @@
 import fs from 'fs';
+import moment from 'moment';
 import pathJS from 'path';
 
 export function eliminarCarpeta(path: string) {
@@ -22,4 +23,13 @@ export function eliminarFile(filename: string) {
     } catch (err) {
         console.log(err);
     }
+}
+
+export function getPathFile(created_at: Date, filename: string) {
+    return new Promise<string>((resolve, reject) => {
+        const fecha = moment(created_at).format('YYYYMMDDHHmmss');
+        const filePath = pathJS.resolve(__dirname, `../uploads/${fecha}/${filename}`);
+        if (!fs.existsSync(filePath)) return reject('El archivo no existe');
+        resolve(filePath);
+    });
 }

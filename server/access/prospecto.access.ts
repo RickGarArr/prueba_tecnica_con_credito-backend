@@ -14,6 +14,7 @@ export function getAll(page: number = 1, { estatus, nombre }: { estatus?: any, n
     let query: any = {};
     if (estatus?.trim() != '') query.estatus = estatus;
     if (nombre?.trim() != '') query.nombre = { $regex: '.*' + nombre + '.*' };
+    console.log(query);
     Prospecto.find(query).countDocuments((err, number) => {
         Prospecto.find(query)
         // .skip(skip).limit(limit)
