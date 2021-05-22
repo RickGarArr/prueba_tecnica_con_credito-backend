@@ -11,13 +11,15 @@ export interface IProspecto {
     rfc?: string;
     estatus?: string;
     observaciones?: string;
-    created_at?: Date;
+    // created_at?: Date;
     files?: Array<IFile>;
 }
 
 export interface IFile {
     nombre: String,
-    filename: String
+    filename: String,
+    buffer: Buffer,
+    type: String,
 }
 
 export interface IProspectoDB extends Document {

@@ -4,12 +4,10 @@ import { IProspecto } from '../interfaces/prospecto';
 import { IFile } from '../interfaces/prospecto';
 
 const filesSchema = new Schema<IFile>({
-    nombre: {
-        type: String
-    },
-    filename: {
-        type: String
-    }
+    nombre: String,
+    filename:  String,
+    buffer: Buffer,
+    type: String,
 });
 
 const prospectoSchema = new Schema<IProspecto>({
@@ -55,10 +53,7 @@ const prospectoSchema = new Schema<IProspecto>({
     observaciones: {
         type: String
     },
-    files: [ filesSchema ],
-    created_at: {
-        type: Date
-    }
+    files: [ filesSchema ]
 }, { collection: 'prospectos' });
 
 // prospectoSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });

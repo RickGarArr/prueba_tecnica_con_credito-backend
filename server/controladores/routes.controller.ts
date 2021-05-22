@@ -1,7 +1,7 @@
 import e, { Request, Response } from 'express';
 import moment from 'moment';
 import { create, getAll, getOne, updateOne } from '../access/prospecto.access';
-import { getPathFile } from '../helpers/filesHelper';
+import { createPathFile, eliminarFile, getPathFile } from '../helpers/filesHelper';
 import { sendErrors } from '../helpers/sendMesages';
 import { IFile, IProspectoDB } from '../interfaces/prospecto';
 import mime from 'mime';
@@ -25,12 +25,11 @@ export function postProspectos(req: Request, res: Response) {
     const date = moment(req.body.fecha, 'YYYYMMDDHHmmss').toDate();
     let files: Array<IFile> = [];
     Array.from(req.files as Express.Multer.File[]).forEach(file => {
-        files.push({ nombre: file.fieldname, filename: file.originalname })
+        files.push({ nombre: file.fieldname, filename: file.originalname, buffer: file.buffer, type: file.mimetype });
     });
     const { nombre, apellido_pat, apellido_mat, calle, numero, colonia, codigo_postal, telefono, rfc } = req.body;
     create({
-        nombre, apellido_mat, apellido_pat, calle, numero, colonia, codigo_postal, telefono, rfc, estatus: "enviado",
-        created_at: date, files
+        nombre, apellido_mat, apellido_pat, calle, numero, colonia, codigo_postal, telefono, rfc, estatus: "enviado", files
     }, (err: any, prospectoDB: IProspectoDB) => {
         if (err) return console.log(err);
         res.json({
@@ -65,14 +64,18 @@ export function evaluarProspecto(req: Request, res: Response) {
 
 export function sendFile(req: Request, res: Response) {
     const { id, filename } = req.params;
-    getOne(id, async (err: any, { created_at }: IProspectoDB) => {
+    getOne(id, async (err: any, { files }: IProspectoDB) => {
+        if (err) return sendErrors(res, 400, 'Error al encontrar el archivo');
         try {
-            const pathFile = await getPathFile(created_at, filename);
-            const type = mime.lookup(pathFile);
-            if (!res.getHeader('content-type')) res.setHeader('Content-Type', type);            
+            const fileDB = files.find(file => file.filename === filename);
+            const pathFile = await createPathFile(fileDB?.buffer, fileDB?.type, fileDB?.filename);
+            const ct = fileDB?.type.toString() || 'application/octet-stream';
+            if (!res.getHeader('content-type')) res.setHeader('Content-Type', ct);            
             res.sendFile(pathFile);
         } catch (error) {
             console.log(error);
+        } finally {
+            // eliminarFile(filename);
         }
     });
 }

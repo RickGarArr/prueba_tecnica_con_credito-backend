@@ -18,7 +18,7 @@ export function eliminarCarpeta(path: string) {
 
 export function eliminarFile(filename: string) {
     try {
-        const path = pathJS.join(__dirname, '../', filename);
+        const path = pathJS.join(__dirname, '../uploads', filename);
         fs.unlinkSync(path);
     } catch (err) {
         console.log(err);
@@ -31,5 +31,21 @@ export function getPathFile(created_at: Date, filename: string) {
         const filePath = pathJS.resolve(__dirname, `../uploads/${fecha}/${filename}`);
         if (!fs.existsSync(filePath)) return reject('El archivo no existe');
         resolve(filePath);
+    });
+}
+
+export function createPathFile(buffer?: Buffer, type: any = "", filename: any = "") {
+    return new Promise<string>((resolve, reject) => {
+        try {
+            const pathToFile = pathJS.resolve(__dirname, '../uploads');
+            if (!fs.existsSync(pathToFile)) fs.mkdirSync(pathToFile, { recursive: true });
+            const pathFile = pathJS.resolve(pathToFile, filename);
+            if (buffer) {
+                fs.writeFileSync(pathFile, buffer);
+                resolve(pathFile);
+            }
+        } catch (err) {
+            reject('Error al crear el archivo');
+        }
     });
 }
