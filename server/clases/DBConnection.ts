@@ -9,7 +9,7 @@ export default class DBConnection {
             useCreateIndex: true,
             useFindAndModify: false
         };
-        Mongoose.connect('mongodb://localhost:27017/concredito', mongooseOptions, (err) => {
+        Mongoose.connect(process.env.DBCNN as string || 'mongodb://localhost:27017/concredito', mongooseOptions, (err) => {
             if (err) console.log(err);
             console.log('base de datos online');
         });

@@ -5,7 +5,7 @@ export default class RESTServer {
     private static _instance: RESTServer;
 
     private _app: Express.Application;
-    private _port: number = Number(process.env.PORT);
+    private _port: number = Number(process.env.PORT) || 5000;
 
     private constructor() {
         this._app = Express();
